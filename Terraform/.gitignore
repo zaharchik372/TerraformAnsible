@@ -1,5 +1,6 @@
 # Локальные секреты/скрипты окружения
 secrets.env
+secret.env
 .secrets
 .envrc
 *.env
