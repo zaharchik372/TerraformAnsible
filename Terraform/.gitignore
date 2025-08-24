@@ -1,0 +1,34 @@
+# Локальные секреты/скрипты окружения
+secrets.env
+.secrets
+.envrc
+*.env
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+
+# Terraform dirs
+.terraform/
+
+# Terraform state (никогда не в гит)
+*.tfstate
+*.tfstate.*
+main.backup.tfvars
+secret.backend.tfvars
+
+# Crash & plans
+crash.log
+crash.*
+*.tfplan
+plan.*
+
+# Varfiles: игнорим все auto.tfvars, КРОМЕ nonsecret.auto.tfvars
+*.auto.tfvars
+!nonsecret.auto.tfvars
+
+# Секретные varfiles по маске
+secret.*.tfvars
+secret.auto.tfvars
+
