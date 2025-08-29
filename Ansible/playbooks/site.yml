@@ -1,0 +1,7 @@
+---
+- name: Установка Docker и деплой приложения
+  hosts: web
+  become: yes
+  roles:
+    #- docker    
+    - deploy    

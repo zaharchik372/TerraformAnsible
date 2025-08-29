@@ -62,7 +62,7 @@ variable "resource_tags" {
 }
 
 variable "ssh_public_key_path" {
-  description = "Путь к публичному SSH-ключу для метадаты (используется юзер ubuntu)"
+  description = "Путь к публичному SSH-ключу для метадаты"
   type        = string
   default     = "~/.ssh/id_ed25519.pub"
 }

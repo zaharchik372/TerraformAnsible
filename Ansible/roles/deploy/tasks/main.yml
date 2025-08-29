@@ -1,0 +1,83 @@
+---
+# 0) Целевой каталог под root (если нет — создадим)
+- name: "Создать каталог назначения"
+  file:
+    path: "{{ deploy_dir }}"
+    state: directory
+    owner: "{{ deploy_owner }}"
+    group: "{{ deploy_group }}"
+    mode: '0755'
+  become: true
+
+# 1) Гарантированно чистим старый /tmp/flaskapp_src, если он мог остаться от root
+- name: "Удалить старую /tmp/flaskapp_src (если осталась от root)"
+  file:
+    path: /tmp/flaskapp_src
+    state: absent
+  become: true
+
+# 2) Создаём /tmp/flaskapp_src под SSH-пользователем (без sudo) — чтобы rsync мог писать
+- name: "Создать /tmp/flaskapp_src под SSH-пользователем"
+  file:
+    path: "/tmp/flaskapp_src"
+    state: directory
+    mode: '0755'
+  become: false
+
+# 3) Пушим проект в /tmp на удалённый хост (rsync, без sudo)
+- name: "Синхронизировать проект в /tmp (rsync, без sudo)"
+  synchronize:
+    src: "{{ project_src }}/"
+    dest: "/tmp/flaskapp_src/"
+    delete: true
+    recursive: true
+    mode: push
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=__pycache__"
+      - "--exclude=venv"
+  delegate_to: localhost
+  become: false
+
+# 4) Перекладываем из /tmp под root в целевой каталог
+- name: "Перенести из /tmp во {{ deploy_dir }} (root)"
+  command: rsync -a --delete /tmp/flaskapp_src/ {{ deploy_dir }}/
+  become: true
+
+# 5) Чиним владельца/группу на целевом каталоге рекурсивно
+- name: "Выставить права на {{ deploy_dir }}"
+  file:
+    path: "{{ deploy_dir }}"
+    state: directory
+    recurse: true
+    owner: "{{ deploy_owner }}"
+    group: "{{ deploy_group }}"
+  become: true
+
+# 6) Ищем docker-compose файл (и .yml, и .yaml)
+- name: "Проверить docker-compose.yml"
+  stat:
+    path: "{{ deploy_dir }}/docker-compose.yml"
+  register: comp_yml
+
+- name: "Проверить docker-compose.yaml"
+  stat:
+    path: "{{ deploy_dir }}/docker-compose.yaml"
+  register: comp_yaml
+
+- name: "Определить путь к compose-файлу (если есть)"
+  set_fact:
+    compose_path: >-
+      {{ (comp_yml.stat.exists | default(false)) | ternary(deploy_dir ~ '/docker-compose.yml',
+          (comp_yaml.stat.exists | default(false)) | ternary(deploy_dir ~ '/docker-compose.yaml', '')) }}
+
+# 7) docker up
+
+- name: "docker compose up -d --build"
+  command: docker compose up -d --build
+  args:
+    chdir: "{{ deploy_dir }}"
+  when:
+    - auto_compose_up | bool
+    - compose_path != ""
+  become: true

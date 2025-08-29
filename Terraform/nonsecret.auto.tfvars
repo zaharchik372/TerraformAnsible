@@ -1,8 +1,7 @@
 zone = "ru-central1-a"
 
-# ВАЖНО: твои ID из скринов
 existing_network_id = "enp3k4rtt74cvbou416v"
-existing_subnet_id  = "e9bph6g688de8t0t4s10" # ru-central1-a
+existing_subnet_id  = "e9bph6g688de8t0t4s10" 
 
 vm_name_prefix = "TestIaC"
 instance_count = 2

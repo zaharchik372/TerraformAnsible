@@ -132,7 +132,7 @@ resource "yandex_lb_network_load_balancer" "app_lb" {
 # Ansible inventory.ini
 ############################################
 resource "local_file" "ansible_inventory" {
-  filename        = "${path.module}/../Ansible/inventory.ini"
+  filename        = "${path.module}/../Ansible/inventories/prod/hostsTerraform.ini"
   file_permission = "0644"
   content = <<EOT
 [web]

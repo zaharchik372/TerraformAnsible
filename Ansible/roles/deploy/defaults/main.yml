@@ -1,0 +1,6 @@
+project_src: "{{ playbook_dir }}/../../flaskapp"
+deploy_dir: "/opt/flaskapp"
+use_synchronize: true
+deploy_owner: "root"
+deploy_group: "root"
+auto_compose_up: true
