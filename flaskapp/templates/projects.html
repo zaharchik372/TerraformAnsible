@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Проекты: Ansible и Terraform{% endblock %}
+{% block content %}
+<h2 class="h2">Проекты</h2>
+<div class="grid">
+<article class="card">
+<h3>Ansible</h3>
+<p>Роли для установки Docker, настройки пользователей и деплоя приложений. Идемпотентность, handlers, переменные групп.</p>
+<a class="btn" href="/projects/ansible">Подробнее</a>
+</article>
+<article class="card">
+<h3>Terraform</h3>
+<p>Инфраструктура как код: сети, инстансы, security‑группы, outputs и remote‑backend. Валидация и форматирование.</p>
+<a class="btn" href="/projects/terraform">Подробнее</a>
+</article>
+</div>
+{% endblock %}

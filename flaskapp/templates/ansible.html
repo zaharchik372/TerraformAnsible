@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}Ansible: Роли и деплой{% endblock %}
+{% block content %}
+<h2 class="h2">Ansible</h2>
+<p>Фрагмент простой роли для установки Docker на Ubuntu/Debian с правильным репозиторием и ключами:</p>
+<pre><code>- name: Установить зависимости для APT по HTTPS
+apt:
+name:
+- ca-certificates
+- curl
+- gnupg
+update_cache: true
+
+
+- name: Добавить GPG‑ключ Docker
+ansible.builtin.shell: |
+install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg \
+| gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+chmod a+r /etc/apt/keyrings/docker.gpg
+args:
+creates: /etc/apt/keyrings/docker.gpg
+
+
+- name: Добавить репозиторий Docker
+copy:
+dest: /etc/apt/sources.list.d/docker.list
+content: |
+deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+
+
+- name: Установить Docker
+apt:
+name:
+- docker-ce
+- docker-ce-cli
+- containerd.io
+update_cache: true
+state: present
+
+
+- name: Включить и запустить Docker
+service:
+name: docker
+state: started
+enabled: true
+</code></pre>
+<p>Деплой контейнеров:</p>
+<pre><code>- name: Деплой портфолио‑сайта
+community.docker.docker_compose_v2:
+project_src: /opt/portfolio
+state: present
+</code></pre>
+{% endblock %}

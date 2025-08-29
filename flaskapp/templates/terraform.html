@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Terraform: IaC примеры{% endblock %}
+{% block content %}
+<h2 class="h2">Terraform</h2>
+<p>Минимальный пример VPC + VM (провайдер любой, подставьте свой):</p>
+<pre><code>terraform {
+required_version = ">= 1.6"
+required_providers {
+yandex = {
+source = "yandex-cloud/yandex"
+version = ">= 0.123"
+}
+}
+}
+
+
+provider "yandex" {
+zone = var.zone
+}
+
+
+resource "yandex_vpc_network" "net" {
+name = "demo-net"
+}
+
+
+resource "yandex_vpc_subnet" "subnet" {
+name = "demo-subnet"
+zone = var.zone
+network_id = yandex_vpc_network.net.id
+v4_cidr_blocks = ["10.10.0.0/24"]
+}
+
+
+output "subnet_id" { value = yandex_vpc_subnet.subnet.id }
+</code></pre>
+<p>Команды: <code>terraform fmt && terraform validate && terraform apply</code></p>
+{% endblock %}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{% block title %}DevOps Портфолио{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<meta name="description" content="Портфолио: Flask + Docker + Nginx, проекты Ansible и Terraform, CI/CD." />
+</head>
+<body>
+<header class="header">
+<div class="container header__inner">
+<a class="brand" href="/">Z3r0pad • DevOps</a>
+<nav class="nav">
+<a href="/projects">Проекты</a>
+<a href="/projects/ansible">Ansible</a>
+<a href="/projects/terraform">Terraform</a>
+<button id="themeToggle" aria-label="Toggle theme">🌓</button>
+</nav>
+</div>
+</header>
+
+
+<main class="container">
+{% block content %}{% endblock %}
+</main>
+
+
+<footer class="footer">
+<div class="container">
+© 2025 • Flask • Docker • Nginx • GitLab CI/CD • Ansible • Terraform
+</div>
+</footer>
+
+
+<script>
+const key = 'theme:dark';
+const root = document.documentElement;
+const btn = document.getElementById('themeToggle');
+const apply = v => root.setAttribute('data-theme', v ? 'dark' : 'light');
+let dark = localStorage.getItem(key) === '1';
+apply(dark);
+btn?.addEventListener('click', () => { dark = !dark; localStorage.setItem(key, dark ? '1' : '0'); apply(dark); });
+</script>
+</body>
+</html>
